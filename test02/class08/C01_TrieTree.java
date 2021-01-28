@@ -19,39 +19,84 @@ package class08;
 public class C01_TrieTree {
 
     public static void main(String[] args) {
-
+        TrieTree trieTree = new TrieTree();
+        trieTree.insert("abc");
+        trieTree.insert("abcd");
+        System.out.println(trieTree.search("avc"));
+        System.out.println(trieTree.search("abc"));
+        System.out.println(trieTree.search("abcd"));
+        System.out.println(trieTree.prefixNumber("abc"));
+        trieTree.delete("abc");
+        System.out.println(trieTree.search("abc"));
     }
 
     static class TrieTree {
-
-
+        Node root = new Node();
 
         public void insert(String str) {
-
+            char[] chs = str.toCharArray();
+            Node r = root;
+            r.pass++;
+            for (int i = 0; i < chs.length; i++) {
+                int index = chs[i] - 'a';
+                if (r.next[index] == null) {
+                    r.next[index] = new Node();
+                }
+                r.next[index].pass++;
+                r = r.next[index];
+            }
+            r.end++;
         }
 
         public int search(String str) {
-            return 0;
+            char[] chs = str.toCharArray();
+            Node r = root;
+            for (int i = 0; i < chs.length; i++) {
+                int index = chs[i] - 'a';
+                if (r.next[index] == null) {
+                    return 0;
+                }
+                r = r.next[index];
+            }
+            return r.end;
         }
 
         public void delete(String str) {
-
+            if (search(str) <= 0) {
+                return;
+            }
+            char[] chs = str.toCharArray();
+            Node r = root;
+            r.pass--;
+            for (int i = 0; i < chs.length; i++) {
+                int index = chs[i] - 'a';
+                r.next[index].pass--;
+                if (r.next[index].pass == 0) {  // help gc
+                    r.next[index] = null;
+                    return;
+                }
+                r = r.next[index];
+            }
+            r.end--;
         }
 
         public int prefixNumber(String str) {
-
-            return 0;
+            char[] chs = str.toCharArray();
+            Node r = root;
+            for (int i = 0; i < chs.length; i++) {
+                int index = chs[i] - 'a';
+                if (r.next[index] == null) {
+                    return -1;
+                }
+                r = r.next[index];
+            }
+            return r.pass;
         }
     }
 
     static class Node {
-        String c;
         int pass = 0;
         int end = 0;
-        Node[] next;
-
-        public Node(String c) {
-            this.c = c;
-        }
+        Node[] next = new Node[26];
     }
 }
