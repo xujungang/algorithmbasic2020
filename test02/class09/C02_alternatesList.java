@@ -18,27 +18,40 @@ public class C02_alternatesList {
     }
 
     public static void alternatesList(Node head) {
-        if (head == null || head.next == null || head.next.next == null) {
+        if (head == null || head.next == null) {
             return;
         }
         // 找到中间节点
         Node p1 = head.next.next;   // 快指针
-        Node mid = head.next;       // 慢指针
+        Node mid = head;            // 慢指针
         while (p1 != null && p1.next != null) {
             p1 = p1.next.next;
             mid = mid.next;
         }
         // 此时 mid 为中间节点或中上节点
-        p1 = head;
-        Node p1Next, p2Next, p2 = mid;
-        while (p1.next != mid) {
-            p1Next = p1.next;
-            p2Next = p2.next;
-            p1.next = p2;
-            p2.next = p1Next;
-            p1 = p1Next;
-            p2 = p2Next;
+        // 逆序mid之后的节点
+        p1 = mid.next;
+        Node next, pre = null;
+        mid.next = null;
+        while (p1 != null) {
+            next = p1.next;
+            p1.next = pre;
+            pre = p1;
+            p1 = next;
         }
-        p1.next = p2;
+        // 此时 链表基于中间节点整对称的.并且pre是尾
+        // 组成新的链表
+        Node cur = head;
+        p1 = head.next;
+        cur.next = pre;
+        Node p2 = pre.next;
+        cur = cur.next;
+        while (p1 != null) {
+            cur.next = p1;
+            p1 = p1.next;
+            cur.next.next = p2;
+            p2 = p2.next;
+            cur = cur.next.next;
+        }
     }
 }
